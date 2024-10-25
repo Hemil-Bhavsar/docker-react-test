@@ -42,7 +42,7 @@ jobs:
           application_name: frontend
           environment_name: Frontend-env
           version_label: "app-${{ steps.format-time.outputs.replaced }}"
-          region: us-west-1
+          region: us-east-1
           deployment_package: app.zip
 
       - name: Deployed!
