@@ -1,49 +1,57 @@
-name: Deploy React App from GitHub to AWS Elastic Beanstalk
+name: Dev deployment from Github to AWS
 on:
-  # activates the workflow when there is a push on the master branch
   push:
     branches:
-      - master
+      - main
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest # the operating system your job should run on
-    strategy:
-      matrix:
-        node-version: [22.x]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Latest Repo
-        # checks out your repository under the GitHub workspace so that your workflow can access it
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
 
-      - name: Generate Deployment Package 
-        # zip all files except .git
-        run: zip -r app.zip * -x "**.git**"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-      - name: Get timestamp
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: my-react-app:latest
+      # .github/workflows/main.yml continued
+
+      - name: Get Timestamp
         uses: gerred/actions/current-time@master
         id: current-time
 
-      - name: Run string replace
+      - name: Run String Replace
         uses: frabert/replace-string-action@master
         id: format-time
         with:
-          # replaces '[:\.]+' in the timestamp with '-'
           pattern: '[:\.]+'
           string: "${{ steps.current-time.outputs.time }}"
           replace-with: '-'
           flags: 'g'
 
-      - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v22
-        with:
-         #  input the credentials you used to setup AWS CLI and credentials for the application environment
-          aws_access_key: "${{ secrets.AWS_ACCESS_KEY_ID}}"
-          aws_secret_key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-          application_name: frontend
-          environment_name: Frontend-env
-          version_label: "app-2"
-          region: us-east-1
-          deployment_package: app.zip
+      - name: Generate Deployment Package
+        run: zip -r deploy.zip * -x "**node_modules**"
 
-      - name: Deployed!
-        run: echo App deployed to ELB
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v16
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: frontend
+          environment_name: Frontend-app
+          version_label: "docker-app-${{ steps.format-time.outputs.replaced }}"
+          region: us-west-2
+          deployment_package: deploy.zip
