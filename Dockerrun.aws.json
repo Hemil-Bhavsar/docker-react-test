@@ -1,7 +1,7 @@
 {
-    "AWSEBDockerrunVersion": "1",
+    "AWSEBDockerrunVersion": "2",
     "Image": {
-        "Name": "docker-react-test/docker-react-test:latest",
+        "Name": "docker-react-test",
         "Update": "true"
     },
     "Ports": [
