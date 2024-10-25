@@ -14,6 +14,7 @@ jobs:
       - name: Checkout Latest Repo
         # checks out your repository under the GitHub workspace so that your workflow can access it
         uses: actions/checkout@v2
+        
 
       - name: Generate Deployment Package 
         # zip all files except .git
