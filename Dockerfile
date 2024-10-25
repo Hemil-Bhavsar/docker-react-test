@@ -1,10 +1,14 @@
-FROM node:22-alpine as builder
-WORKDIR '/app'
-COPY package.json .
-RUN npm install
-COPY . .
-RUN npm run build
+FROM node:22-alpine
+ENV PORT=3000
 
-FROM nginx 
-EXPOSE 3000
-COPY --from=builder /app/build /usr/share/nginx/html
+WORKDIR /bookapp-react-js
+COPY . /bookapp-react-js
+RUN npm run build
+EXPOSE ${PORT}
+CMD ["npm", "start"]
+
+
+FROM nginx:1.22.1-alpine as prod-stage
+COPY --from=build-stage /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
