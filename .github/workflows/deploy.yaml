@@ -17,7 +17,7 @@ jobs:
 
       - name: Generate Deployment Package 
         # zip all files except .git
-        run: zip -r deploy-dog-app.zip * -x "**.git**"
+        run: zip -r app.zip * -x "**.git**"
 
       - name: Get timestamp
         uses: gerred/actions/current-time@master
@@ -34,16 +34,16 @@ jobs:
           flags: 'g'
 
       - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v21
+        uses: einaregilsson/beanstalk-deploy@v22
         with:
          #  input the credentials you used to setup AWS CLI and credentials for the application environment
           aws_access_key: "${{ secrets.AWS_ACCESS_KEY_ID}}"
           aws_secret_key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-          application_name: react-app
-          environment_name: react-app-dev
+          application_name: frontend
+          environment_name: Frontend-env
           version_label: "app-${{ steps.format-time.outputs.replaced }}"
-          region: us-west-2
-          deployment_package: deploy-dog-app.zip
+          region: us-west-1
+          deployment_package: app.zip
 
       - name: Deployed!
         run: echo App deployed to ELB
