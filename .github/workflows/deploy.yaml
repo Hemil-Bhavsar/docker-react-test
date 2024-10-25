@@ -27,8 +27,7 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: my-react-app:latest
-
+          tags: hemilbhavsar37/my-react-app:latest
       - name: Get Timestamp
         uses: gerred/actions/current-time@master
         id: current-time
