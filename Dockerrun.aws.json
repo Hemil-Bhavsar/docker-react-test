@@ -3,7 +3,7 @@
     "containerDefinitions": [
         {
             "name": "docker-react-test",
-            "image": "your-docker-image-name:latest",
+            "image": "docker-react-test:latest",
             "essential": true,
             "memory": 512,
             "portMappings": [
@@ -15,8 +15,8 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/aws/elasticbeanstalk/your-environment-name",
-                    "awslogs-region": "your-region",
+                    "awslogs-group": "/aws/elasticbeanstalk/Frontend-env",
+                    "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
                 }
             }
