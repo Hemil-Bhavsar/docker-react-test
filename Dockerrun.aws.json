@@ -3,7 +3,7 @@
     "containerDefinitions": [
         {
             "name": "docker-react-test",
-            "image": "docker-react-test:latest",
+            "image": "hemilbhavsar37/my-react-app:latest",
             "essential": true,
             "memory": 512,
             "portMappings": [
